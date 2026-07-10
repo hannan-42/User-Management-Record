@@ -74,7 +74,7 @@ app.post('/createUser', async (req, res) => {
 
 
 app.listen(port, () => {
-    console.log('Server Started')
+    console.log(`Server running on port ${port}`)
 })
 
 
