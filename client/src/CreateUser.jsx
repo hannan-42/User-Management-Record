@@ -13,7 +13,7 @@ function CreateUser() {
   const Submit = async (e) => {
     e.preventDefault();
     try {
-    await axios.post('https://user-management-record.vercel.app/createUser', { name, email, age });
+      await axios.post('https://user-management-record.vercel.app/createUser', { name: name, email: email, age: Number(age) });
       alert("User Created Successfully!");
       navigate('/');
     } catch (err) {
