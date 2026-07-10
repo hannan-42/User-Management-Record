@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 
 function CreateUser() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
-  const navigate = useNavigate(); 
-  
+  const navigate = useNavigate();
+
   console.log('render', { name, email, age });
 
   const Submit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:3000/createUser', { name, email, age });
+    await axios.post('https://user-management-record.vercel.app/createUser', { name, email, age });
       alert("User Created Successfully!");
       navigate('/');
     } catch (err) {

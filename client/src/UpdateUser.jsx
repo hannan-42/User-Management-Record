@@ -13,7 +13,7 @@ function UpdateUser() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    axios.get('http://localhost:3000/getUser/' + id)
+    axios.get('https://user-management-record.vercel.app/getUser/' + id)
       .then(result => {
         console.log(result)
         setName(result.data.users.name)
@@ -29,12 +29,11 @@ function UpdateUser() {
       alert('Please fill all fields')
       return
     }
-    axios.put('http://localhost:3000/updateUser/' + id, { name, email, age })
-      .then(result => {
-        console.log(result)
-        alert('User updated successfully')
-        navigate('/')
-      })
+    axios.put('https://user-management-record.vercel.app/updateUser/' + id, { name, email, age }).then(result => {
+      console.log(result)
+      alert('User updated successfully')
+      navigate('/')
+    })
       .catch(err => {
         console.log(err)
         alert('Error updating user')

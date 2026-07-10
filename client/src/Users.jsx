@@ -6,17 +6,15 @@ function Users() {
     const [users, setUsers] = useState([])
 
     useEffect(() => {
-        axios.get('http://localhost:3000')
-            .then(result => setUsers(result.data))
+        axios.get('https://user-management-record.vercel.app').then(result => setUsers(result.data))
             .catch(err => console.log(err))
     }, [])
 
     const handleDelete = (id) => {
-        axios.delete('http://localhost:3000/deleteUser/' + id)
-            .then(res => {
-                console.log(res)
-                setUsers(prevUsers => prevUsers.filter(user => user._id !== id))
-            })
+        axios.delete('https://user-management-record.vercel.app/deleteUser/' + id).then(res => {
+            console.log(res)
+            setUsers(prevUsers => prevUsers.filter(user => user._id !== id))
+        })
             .catch(err => console.log(err))
     }
 
