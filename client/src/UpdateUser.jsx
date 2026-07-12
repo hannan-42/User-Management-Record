@@ -1,44 +1,63 @@
-import React from 'react'
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import { useParams } from 'react-router-dom'
-import { useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 function UpdateUser() {
-  const { id } = useParams()
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [age, setAge] = useState("")
-  const navigate = useNavigate()
+  const { id } = useParams();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [age, setAge] = useState("");
+  const [isLoading, setIsLoading] = useState(false); 
+
+  const navigate = useNavigate();
+
+  const API_URL = process.env.REACT_APP_API_URL || 'https://user-management-record.vercel.app';
 
   useEffect(() => {
-    axios.get('https://user-management-record.vercel.app/getUser/' + id)
-      .then(result => {
-        console.log(result)
-        setName(result.data.users.name)
-        setEmail(result.data.users.email)
-        setAge(result.data.users.age)
-      })
-      .catch(err => console.log(err))
-  }, [])
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/getUser/${id}`);
+        setName(response.data.user.name);
+        setEmail(response.data.user.email);
+        setAge(response.data.user.age);
+      } catch (err) {
+        console.error('Issue in Data Loading:', err);
+        const errorMessage = err.response?.data?.error || 'User is not fetching data';
+        alert(errorMessage);
+      }
+    };
+    fetchUserData();
+  }, [id, API_URL]);
 
-  const Update = (e) => {
-    e.preventDefault()
-    if (!name || !email || !age) {
-      alert('Please fill all fields')
-      return
+  const Update = async (e) => {
+    e.preventDefault();
+
+    if (!name.trim() || !email.trim() || !age) {
+      alert('Please fill all fields with valid data');
+      return;
     }
-    axios.put('https://user-management-record.vercel.app/updateUser/' + id, { name, email, age }).then(result => {
-      console.log(result)
-      alert('User updated successfully')
-      navigate('/')
-    })
-      .catch(err => {
-        console.log(err)
-        alert('Error updating user')
-      })
-  }
+
+    try {
+      setIsLoading(true);
+
+      const response = await axios.put(`${API_URL}/updateUser/${id}`, {
+        name: name.trim(),
+        email: email.trim(),
+        age: Number(age)
+      });
+
+      console.log('Update Result:', response.data);
+      alert('User updated successfully');
+      navigate('/');
+
+    } catch (err) {
+      console.error('Error during update:', err);
+      const errorMessage = err.response?.data?.error || 'Error updating user';
+      alert(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className='min-vh-100 d-flex justify-content-center align-items-center bg-light'>
@@ -57,6 +76,7 @@ function UpdateUser() {
                 className='form-control form-control-lg'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                disabled={isLoading}
               />
             </div>
             <div className='mb-3'>
@@ -67,6 +87,7 @@ function UpdateUser() {
                 className='form-control form-control-lg'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
               />
             </div>
             <div className='mb-4'>
@@ -77,17 +98,29 @@ function UpdateUser() {
                 className='form-control form-control-lg'
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
+                disabled={isLoading}
               />
             </div>
             <div className='d-flex justify-content-between align-items-center'>
-              <button type='submit' className='btn btn-sm btn-outline-success me-2'>Save Changes</button>
-              <Link to='/' className='btn btn-outline-secondary btn-lg'>Cancel</Link>
+              <button
+                type='submit'
+                className='btn btn-sm btn-outline-success me-2'
+                disabled={isLoading}
+              >
+                {isLoading ? 'Saving...' : 'Save Changes'}
+              </button>
+              <Link
+                to='/'
+                className={`btn btn-outline-secondary btn-lg ${isLoading ? 'disabled' : ''}`}
+              >
+                Cancel
+              </Link>
             </div>
           </form>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default UpdateUser
+export default UpdateUser;

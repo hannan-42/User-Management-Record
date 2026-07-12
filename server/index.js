@@ -16,57 +16,105 @@ mongoose.connect(process.env.MONGO_URI)
     .catch((err) => console.log("Connection failed", err))
 
 // Routes
-app.get('/', (req, res) => {
-    UserModel.find({})
-        .then(users => res.json(users))
-        .catch(err => res.json(err))
-})
-
-
-app.get('/getUser/:id', (req, res) => {
-    const id = req.params.id
-    UserModel.findById({ _id: id })
-        .then((users) => {
-            return res.status(201).json({ msg: "User Found", users })
-        })
-        .catch((err) => {
-            return res.status(400).json({ msg: "Try Again Updating", err })
-        })
-})
-
-app.put('/updateUser/:id', (req, res) => {
-    const id = req.params.id
-    if (!id) {
-        return res.status(400).json({ msg: "ID missing" })
+app.get('/', async (req, res) => {
+    try {
+        const allUsers = await UserModel.find({})
+        return res.status(200).json({ users: allUsers })
     }
-    UserModel.findByIdAndUpdate(id, req.body, { new: true })
-        .then(updatedUser => {
-            console.log('Updated User:', updatedUser)
-            res.status(200).json({
-                msg: "User Updated Successfully", user: updatedUser
-            })
-        })
-        .catch(err => {
-            console.error('Error:', err.message)
-            res.status(400).json({ msg: "Update Failed", error: err.message })
-        })
-})
-app.delete('/deleteUser/:id', (req, res) => {
-    const id = req.params.id;
-    UserModel.findByIdAndDelete({ _id: id })
-        .then(res => console.log(res))
-        .catch(err => console.log(err))
-})
-app.post('/createUser', async (req, res) => {
-    UserModel.create(req.body)
-        .then((users) => {
-            return res.status(201).json({ msg: "User Created Successfuly" })
-        })
-        .catch((err) => {
-            return res.status(400).json({ msg: "Bad Request", err })
-        })
+    catch (err) {
+        console.log("Database fetch error:", err.message)
+        return res.status(500).json({ error: "Server is currently unavailable" })
+
+    }
 })
 
+app.get('/getUser/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const user = await UserModel.findById(id);
+        if (!user) {
+            return res.status(404).json({ msg: "User not found" });
+        }
+        return res.status(200).json({
+            msg: "User Found",
+            user: user
+        });
+
+    } catch (err) {
+        console.error('Error fetching user:', err.message);
+        return res.status(400).json({
+            msg: "Failed to fetch user",
+            error: err.message
+        });
+    }
+});
+
+app.put('/updateUser/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (!id) {
+            return res.status(400).json({ msg: "ID missing" })
+        }
+        const { name, email, age } = req.body
+        const updateUser = await UserModel.findByIdAndUpdate(
+            id,
+            { name, email, age },
+            { new: true, runValidators: true }
+        )
+        if (!updateUser) {
+            return res.status(404).json({ msg: "User Not found" })
+        }
+        console.log('Updated User:', updateUser)
+        return res.status(200).json({
+            msg: "User Updated Successfully",
+            user: updateUser
+        })
+    } catch (err) {
+        console.log('Error', err.message)
+        return res.status(400).json({
+            msg: "Update Failed", error: err.message
+        })
+    }
+})
+
+app.delete('/deleteUser/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const deleteUser = await UserModel.findByIdAndDelete(id)
+        if (!deleteUser) {
+            return res.status(404).json({ error: 'User Not Found' })
+        }
+        return res.status(200).json({
+            msg: 'User Deleted Successfully',
+            user: deleteUser
+        })
+    }
+    catch (err) {
+        console.log("Error:", err.message)
+        return res.status(400).json({
+            msg: "Failed to Delete User",
+            error: err.message
+        })
+    }
+})
+
+app.post('/createUser', async (req, res) => {
+    try {
+        const { name, email, age } = req.body;
+        const newUser = await UserModel.create({ name, email, age });
+        return res.status(201).json({
+            msg: "User Created Successfully",
+            user: newUser
+        });
+
+    } catch (err) {
+        console.error('Error in createUser:', err.message);
+        return res.status(400).json({
+            msg: "Bad Request",
+            error: err.message
+        });
+    }
+});
 
 
 app.listen(port, () => {
