@@ -10,7 +10,7 @@ function CreateUser() {
 
   const navigate = useNavigate();
 
-  const API_URL = process.env.REACT_APP_API_URL || 'https://user-management-record.vercel.app';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
   const Submit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !age) {
@@ -32,7 +32,7 @@ function CreateUser() {
       const backendError = err.response?.data?.error || "Something went wrong while Creating User.";
       alert(backendError);
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
 
@@ -54,7 +54,7 @@ function CreateUser() {
                 className='form-control'
                 placeholder='Enter name'
                 onChange={(e) => setName(e.target.value)}
-                disabled={isLoading} 
+                disabled={isLoading}
               />
             </div>
             <div className='mb-3'>

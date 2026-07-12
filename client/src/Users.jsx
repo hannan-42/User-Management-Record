@@ -5,13 +5,12 @@ import axios from 'axios';
 function Users() {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const API_URL = process.env.REACT_APP_API_URL || 'https://user-management-record.vercel.app';
-
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
     useEffect(() => {
         const fetchUsers = async () => {
             try {
                 const response = await axios.get(`${API_URL}/`);
-                setUsers(response.data.users); 
+                setUsers(response.data.users);
             } catch (err) {
                 console.error("Fetch Error:", err);
                 alert(err.response?.data?.error || "Failed to load users from the database.");
@@ -76,7 +75,7 @@ function Users() {
                                                     <Link to={`/update/${user._id}`} className='btn btn-sm btn-outline-success me-2'>
                                                         Update
                                                     </Link>
-                                                    <button 
+                                                    <button
                                                         className='btn btn-sm btn-outline-danger'
                                                         onClick={() => handleDelete(user._id)}
                                                     >

@@ -7,12 +7,11 @@ function UpdateUser() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const API_URL = process.env.REACT_APP_API_URL || 'https://user-management-record.vercel.app';
-
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
   useEffect(() => {
     const fetchUserData = async () => {
       try {
