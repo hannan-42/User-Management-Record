@@ -10,7 +10,10 @@ function Users() {
         const fetchUsers = async () => {
             try {
                 const response = await axios.get(`${API_URL}/`);
-                setUsers(response.data.users);
+                console.log("BACKEND DATA:", response.data);
+
+                const safeData = response.data.users || response.data || [];
+                setUsers(safeData);
             } catch (err) {
                 console.error("Fetch Error:", err);
                 alert(err.response?.data?.error || "Failed to load users from the database.");
@@ -18,10 +21,9 @@ function Users() {
                 setIsLoading(false);
             }
         };
-
         fetchUsers();
     }, [API_URL]);
-
+    
     const handleDelete = async (id) => {
         const isConfirmed = window.confirm("Are you sure you want to delete this user?");
         if (!isConfirmed) return;
