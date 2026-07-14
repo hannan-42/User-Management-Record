@@ -5,7 +5,7 @@ import axios from 'axios';
 function Users() {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+    const API_URL = import.meta.env.VITE_API_URL || 'https://usermgmt-api.vercel.app';
     useEffect(() => {
         const fetchUsers = async () => {
             try {
