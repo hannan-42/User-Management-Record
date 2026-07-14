@@ -10,7 +10,7 @@ function CreateUser() {
 
   const navigate = useNavigate();
 
-  const API_URL = import.meta.env.VITE_API_URL || 'https://usermgmt-api.vercel.app';
+  const API_URL = 'https://usermgmt-api.vercel.app';
   const Submit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !age) {

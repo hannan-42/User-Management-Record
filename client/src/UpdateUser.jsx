@@ -11,7 +11,7 @@ function UpdateUser() {
 
   const navigate = useNavigate();
 
-  const API_URL = import.meta.env.VITE_API_URL || 'https://usermgmt-api.vercel.app';
+  const API_URL = 'https://usermgmt-api.vercel.app';
   useEffect(() => {
     const fetchUserData = async () => {
       try {
