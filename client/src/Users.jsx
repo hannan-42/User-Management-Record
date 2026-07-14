@@ -12,7 +12,9 @@ function Users() {
                 const response = await axios.get(`${API_URL}/`);
                 console.log("BACKEND DATA:", response.data);
 
-                const safeData = response.data.users || response.data || [];
+                console.log("RAW BACKEND RESPONSE:", response.data)
+                const rawData = response.data?.users || response.data;
+                const safeData = Array.isArray(rawData) ? rawData : [];
                 setUsers(safeData);
             } catch (err) {
                 console.error("Fetch Error:", err);
@@ -23,7 +25,7 @@ function Users() {
         };
         fetchUsers();
     }, [API_URL]);
-    
+
     const handleDelete = async (id) => {
         const isConfirmed = window.confirm("Are you sure you want to delete this user?");
         if (!isConfirmed) return;
